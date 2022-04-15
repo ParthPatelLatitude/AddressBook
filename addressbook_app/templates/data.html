@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script> 
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <label for=""></label>
+    
+    <div class="container mt-5 ">
+        <div class="row ">
+            <div class="col-sm-11">
+                <h3 style="color:darkolivegreen;" >Welcome, {{ request.session.email_id|capfirst }}</h3>
+            </div>
+            <div class="col-sm-0">
+                <h4>
+                   
+                    <a href="{% url 'logout' %}" class="btn btn btn-primary btn-mg">Logout</a>
+                </h4>
+            </div>
+            
+        </div>
+        <br><br>
+        <div class="row">
+           <div class="col-sm-12">
+            <h3 class="text-center alert alert-danger"><strong> ADDRESS BOOK</strong></h3>
+           </div>
+           <br>
+            <div class="col-sm-4" >
+             
+                <form method="POST">
+                {% csrf_token %}
+                    <h4 class="text-center alert alert-warning"><b>Add Detail</b></h4>
+                    <input type="hidden" name="idname" id="hiddenid">
+                    <label>First_Name</label>
+                    <input type="text" class="form-control" name="first_name" id="first_name"><br>
+
+                    <label>Last_Name</label>
+                    <input type="text" class="form-control" name="last_name" id="last_name"><br>
+
+                    <label>Address</label>
+                    <textarea type="text" class="form-control" name="address" id="address"></textarea><br>
+
+                    <label>Contect</label>
+                    <input type="text" class="form-control" name="phone_number" id="phone_number">
+                    <br>
+                    <button class="btn btn-success" type="submit">Submit</button>                      
+                </form>
+            </div> 
+            <div class="col-lg-8">
+                <table class="table table-hover"> 
+                    <h4 class="text-center alert alert-warning" ><b>Show Detail</b></h4>
+                    <thead >
+                        <th scope="col" >Id</th>
+                        <th scope="col" >First_Name</th>
+                        <th scope="col" >Last_Name</th>
+                        <th scope="col" >Address</th>
+                        <th scope="col" >Contect</th>
+                        <th scope="col" colspan="2" class="text-center">Action</th>
+                    </thead>
+                    <tbody id="tbody" >
+                        {% for i in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{i.first_name}}</td>
+                            <td>{{i.last_name}}</td>
+                            <td>{{i.address}}</td>
+                            <td>{{i.phone_number}}</td>
+
+                            <td>
+                                <input type="button" value="Edit" class="btn btn-outline-warning btn-sm btn-edit button button5" data-id="{{i.id}}">
+                            </td>
+                            <td>
+                                <a href="{% url 'delete' id=i.id %}" class="btn btn-outline-danger btn-sm button button5 ">Delete</a>
+                            </td>
+                        </tr>
+                            {% endfor %}
+                    </tbody>   
+                </table>
+            </div> 
+            
+            
+        </div>  
+    </div>
+
+<script>
+
+// Edit
+$('#tbody').on("click", ".btn-edit", function(){
+    console.log("Edit Button Cliked");
+    let id = $(this).attr("data-id");
+
+    console.log(id);
+
+    mydata = {id:id}
+
+    $.ajax({
+        url: "{% url 'edit' %}",
+        method:"POST",
+        data:mydata,
+
+        success: function(data){
+            console.log(data, "datatatatat");
+            $("#first_name").val(data.first_name);
+            $("#last_name").val(data.last_name);
+            $("#address").val(data.address);
+            $("#phone_number").val(data.phone_number);
+            document.getElementById("hiddenid").value = data.idd
+
+        },
+    })
+})
+</script>
+
+</body>
+</html>
+
